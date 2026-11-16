@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 async function conectarBancoDados() {
   try {
-    const MONGO_URI = process.env.MONGO_URI;
+    const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
     if (!MONGO_URI) {
       throw new Error('A variável MONGO_URI não foi configurada.');
