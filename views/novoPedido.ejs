@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= editing ? 'Editar pedido' : 'Publicar pedido' %> - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body class="request-composer">
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content composer-panel">
+      <header class="composer-heading">
+        <span class="page-eyebrow"><%= editing ? 'Atualize sua solicitação' : 'Sua comunidade pode ajudar' %></span>
+        <h1><%= editing ? 'Editar pedido' : 'Publicar pedido' %></h1>
+        <p><%= editing ? 'Confira as informações e atualize o que for necessário.' : 'Conte o que você precisa. Leva só alguns minutos.' %></p>
+      </header>
+
+      <div class="composer-progress" aria-label="Etapas do formulário">
+        <div class="composer-progress-step is-current" data-progress-step="1">
+          <span>1</span><strong>Necessidade</strong>
+        </div>
+        <div class="composer-progress-line"></div>
+        <div class="composer-progress-step" data-progress-step="2">
+          <span>2</span><strong>Detalhes</strong>
+        </div>
+      </div>
+
+      <section class="composer-card">
+        <% if (error) { %><p class="error"><%= error %></p><% } %>
+
+        <form id="requestForm" class="composer-form" action="<%= editing ? `/pedido/${request._id}/editar` : '/novo-pedido' %>" method="POST" enctype="multipart/form-data">
+          <div class="composer-step" data-form-step="1">
+            <fieldset class="category-fieldset">
+              <legend>Qual tipo de ajuda você precisa?</legend>
+              <p class="composer-hint">Escolha a categoria que melhor representa seu pedido.</p>
+              <div class="request-category-grid">
+                <% const categories = [
+                  { name: 'Alimentação', detail: 'Cesta básica, alimentos e compras', icon: '▦' },
+                  { name: 'Saúde', detail: 'Remédios e itens de saúde', icon: '✚' },
+                  { name: 'Roupas', detail: 'Roupas, agasalhos e calçados', icon: '♧' },
+                  { name: 'Móveis', detail: 'Cama, mesa e itens para casa', icon: '▤' },
+                  { name: 'Transporte', detail: 'Ajuda com deslocamentos', icon: '↗' },
+                  { name: 'Moradia', detail: 'Reparos e materiais', icon: '⌂' },
+                  { name: 'Educação', detail: 'Cadernos, mochilas e materiais', icon: '▣' },
+                  { name: 'Serviço', detail: 'Acompanhamento e serviços', icon: '♡' },
+                  { name: 'Outros', detail: 'Outra necessidade', icon: '＋' }
+                ]; %>
+                <% categories.forEach(function(category, index) { %>
+                  <label class="request-category-card <%= request && request.category === category.name ? 'is-selected' : '' %>">
+                    <input type="radio" name="category" value="<%= category.name %>" <%= request && request.category === category.name ? 'checked' : '' %> <%= !request && index === 0 ? 'required' : '' %> />
+                    <span class="request-category-icon" aria-hidden="true"><%= category.icon %></span>
+                    <span class="request-category-copy">
+                      <strong><%= category.name === 'Serviço' ? 'Serviços e companhia' : category.name === 'Móveis' ? 'Móveis e utensílios' : category.name === 'Moradia' ? 'Reformas e moradia' : category.name === 'Roupas' ? 'Roupas e calçados' : category.name === 'Saúde' ? 'Medicamentos e saúde' : category.name === 'Alimentação' ? 'Mercado e alimentação' : category.name %></strong>
+                      <small><%= category.detail %></small>
+                    </span>
+                    <span class="request-category-check" aria-hidden="true">✓</span>
+                  </label>
+                <% }); %>
+                <% if (request && !categories.some(function(category) { return category.name === request.category; })) { %>
+                  <label class="request-category-card is-selected">
+                    <input type="radio" name="category" value="<%= request.category %>" checked required />
+                    <span class="request-category-icon" aria-hidden="true">＋</span>
+                    <span class="request-category-copy"><strong><%= request.category %></strong><small>Categoria atual do pedido</small></span>
+                    <span class="request-category-check" aria-hidden="true">✓</span>
+                  </label>
+                <% } %>
+              </div>
+            </fieldset>
+
+            <div class="composer-field">
+              <label for="description">O que você precisa exatamente?</label>
+              <textarea id="description" name="description" placeholder="Ex.: Preciso de uma cesta básica para minha família..." required><%= request ? request.description : '' %></textarea>
+            </div>
+
+            <div class="composer-field">
+              <label for="city">Onde podemos ajudar?</label>
+              <input id="city" type="text" name="city" placeholder="Bairro ou região" value="<%= request ? request.city : '' %>" required />
+            </div>
+
+            <div class="composer-actions">
+              <span class="composer-privacy">Sua localização exata não será exibida publicamente.</span>
+              <button type="button" class="btn composer-next">Continuar <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+
+          <div class="composer-step" data-form-step="2" hidden>
+            <div class="composer-step-heading">
+              <h2>Mais alguns detalhes</h2>
+              <p>Essas informações ajudam as pessoas a entender como podem apoiar.</p>
+            </div>
+
+            <div class="composer-fields-grid">
+              <div class="composer-field composer-field-full">
+                <label for="title">Título do pedido</label>
+                <input id="title" type="text" name="title" placeholder="Ex.: Cesta básica para minha família" value="<%= request ? request.title : '' %>" required />
+              </div>
+              <div class="composer-field">
+                <label for="approximateLocation">Ponto de referência <span>(opcional)</span></label>
+                <input id="approximateLocation" type="text" name="approximateLocation" placeholder="Região ou ponto de referência" value="<%= request ? request.approximateLocation : '' %>" />
+              </div>
+              <div class="composer-field">
+                <label for="phone">Telefone para contato</label>
+                <input id="phone" type="tel" name="phone" placeholder="(00) 00000-0000" value="<%= request ? request.phone : user.phone || '' %>" required />
+              </div>
+              <div class="composer-field">
+                <label for="requestDate">Data desejada <span>(opcional)</span></label>
+                <input id="requestDate" type="date" name="requestDate" value="<%= request ? request.requestDate : '' %>" />
+              </div>
+              <div class="composer-field">
+                <label for="requestTime">Horário <span>(opcional)</span></label>
+                <input id="requestTime" type="time" name="requestTime" value="<%= request ? request.requestTime : '' %>" />
+              </div>
+              <div class="composer-field composer-field-full">
+                <label for="additionalInfo">Informações adicionais <span>(opcional)</span></label>
+                <textarea id="additionalInfo" name="additionalInfo" placeholder="Acrescente algum detalhe que possa ajudar"><%= request ? request.additionalInfo : '' %></textarea>
+              </div>
+              <div class="composer-field composer-field-full">
+                <label for="photo">Foto do pedido <span>(opcional)</span></label>
+                <input id="photo" type="file" name="photo" accept="image/*" />
+                <% if (request && request.photo) { %><small class="composer-file-note">Já existe uma foto anexada. Escolha outra para substituí-la.</small><% } %>
+              </div>
+            </div>
+
+            <% if (user.tipo === 'ONG') { %>
+              <fieldset class="third-party-fields composer-ong-fields">
+                <legend>Pedido em nome de outra pessoa</legend>
+                <label class="composer-checkbox-row" for="ehParaTerceiro">
+                  <input id="ehParaTerceiro" type="checkbox" name="ehParaTerceiro" value="true" <%= request && request.ehParaTerceiro ? 'checked' : '' %> />
+                  <span>Estou solicitando ajuda para outra pessoa</span>
+                </label>
+                <div class="beneficiary-fields" id="beneficiaryFields" hidden>
+                  <input type="text" name="nomeBeneficiarioFinal" placeholder="Nome da pessoa que precisa" value="<%= request && request.nomeBeneficiarioFinal ? request.nomeBeneficiarioFinal : '' %>" />
+                  <input type="number" name="idadeBeneficiarioFinal" min="0" placeholder="Idade (opcional)" value="<%= request && request.idadeBeneficiarioFinal ? request.idadeBeneficiarioFinal : '' %>" />
+                  <input type="text" name="enderecoBeneficiarioFinal" placeholder="Bairro ou endereço aproximado" value="<%= request && request.enderecoBeneficiarioFinal ? request.enderecoBeneficiarioFinal : '' %>" />
+                  <input type="text" name="telefoneBeneficiarioFinal" placeholder="Telefone da pessoa (opcional)" value="<%= request && request.telefoneBeneficiarioFinal ? request.telefoneBeneficiarioFinal : '' %>" />
+                  <textarea name="descricaoSituacaoBeneficiario" placeholder="Descrição da situação"><%= request && request.descricaoSituacaoBeneficiario ? request.descricaoSituacaoBeneficiario : '' %></textarea>
+                  <label class="composer-checkbox-row"><input type="checkbox" name="autorizacaoLgpd" <%= request && request.autorizacaoLgpd ? 'checked' : '' %> /><span>A pessoa autorizou a ONG a solicitar ajuda em seu nome (LGPD).</span></label>
+                  <label class="composer-field-label" for="temAcessoInternet">A pessoa tem acesso à internet?</label>
+                  <select id="temAcessoInternet" name="temAcessoInternet">
+                    <option value="sim" <%= !request || request.temAcessoInternet !== false ? 'selected' : '' %>>Sim</option>
+                    <option value="nao" <%= request && request.temAcessoInternet === false ? 'selected' : '' %>>Não</option>
+                  </select>
+                  <p class="privacy-note">Se não tiver acesso, o contato será feito pela ONG.</p>
+                </div>
+              </fieldset>
+            <% } %>
+
+            <div class="composer-actions composer-actions-final">
+              <button type="button" class="composer-back-button">← Voltar</button>
+              <button type="submit" class="btn"><%= editing ? 'Salvar alterações' : 'Publicar pedido' %></button>
+            </div>
+          </div>
+        </form>
+      </section>
+      </main>
+    </div>
+
+    <script>
+      const requestForm = document.getElementById('requestForm');
+      const formSteps = [...document.querySelectorAll('[data-form-step]')];
+      const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
+      const categoryCards = [...document.querySelectorAll('.request-category-card')];
+      const categoryInputs = [...document.querySelectorAll('input[name="category"]')];
+      const isEditing = <%= editing ? 'true' : 'false' %>;
+      let activeStep = isEditing ? 2 : 1;
+
+      function showStep(step) {
+        activeStep = step;
+        formSteps.forEach((section) => { section.hidden = Number(section.dataset.formStep) !== step; });
+        progressSteps.forEach((item) => {
+          const itemStep = Number(item.dataset.progressStep);
+          item.classList.toggle('is-current', itemStep === step);
+          item.classList.toggle('is-complete', itemStep < step);
+          if (itemStep === step) item.setAttribute('aria-current', 'step');
+          else item.removeAttribute('aria-current');
+        });
+
+        categoryInputs.forEach((field, index) => { field.required = step === 1 && index === 0; });
+        document.getElementById('description').required = step === 1;
+        document.getElementById('city').required = step === 1;
+        document.getElementById('title').required = step === 2;
+        document.getElementById('phone').required = step === 2;
+        if (step === 2) document.getElementById('title').focus();
+      }
+
+      function updateSelectedCategory() {
+        categoryCards.forEach((card) => {
+          card.classList.toggle('is-selected', card.querySelector('input').checked);
+        });
+      }
+
+      document.querySelectorAll('input[name="category"]').forEach((input) => input.addEventListener('change', updateSelectedCategory));
+      document.querySelector('.composer-next').addEventListener('click', () => {
+        if (requestForm.reportValidity()) showStep(2);
+      });
+      document.querySelector('.composer-back-button').addEventListener('click', () => showStep(1));
+
+      const beneficiaryToggle = document.getElementById('ehParaTerceiro');
+      const beneficiaryFields = document.getElementById('beneficiaryFields');
+      function updateBeneficiaryFields() {
+        if (!beneficiaryToggle) return;
+        const isThirdParty = beneficiaryToggle.checked;
+        beneficiaryFields.hidden = !isThirdParty;
+        beneficiaryFields.querySelectorAll('input, textarea, select').forEach((field) => {
+          field.required = isThirdParty && (field.name === 'nomeBeneficiarioFinal' || field.name === 'autorizacaoLgpd');
+        });
+      }
+      if (beneficiaryToggle) {
+        beneficiaryToggle.addEventListener('change', updateBeneficiaryFields);
+        updateBeneficiaryFields();
+      }
+
+      updateSelectedCategory();
+      showStep(activeStep);
+    </script>
+
+    <% if (posted) { %>
+      <div class="confirmation-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <div class="confirmation-modal">
+          <div class="confirmation-check" aria-hidden="true">✓</div>
+          <h2 id="confirmationTitle">Seu pedido foi publicado!</h2>
+          <p>Agora pessoas da comunidade podem entrar em contato para ajudar.</p>
+          <a class="btn confirmation-button" href="/meus-pedidos">Ver meus pedidos</a>
+        </div>
+      </div>
+    <% } %>
+    <script defer src="/js/acessibilidade.js"></script>
+  </body>
+</html>

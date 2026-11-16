@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatório de ajudas - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div><span class="page-eyebrow">Histórico completo</span><h1>Relatório do ajudante</h1></div>
+          <div class="header-actions"><a class="btn btn-secondary" href="/dashboard">Voltar</a></div>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-heading compact-heading"><div><span class="section-kicker">Avaliações recebidas</span><h2>Histórico das suas ajudas</h2></div></div>
+          <% if (!requests.length) { %>
+            <div class="empty-panel"><h3>Nenhum dado ainda</h3><p>O histórico aparecerá quando houver uma ajuda registrada.</p></div>
+          <% } else { %>
+            <div class="request-list">
+              <% requests.forEach(function(request) { %>
+                <article class="request-card">
+                  <div class="request-head">
+                    <div><span class="category-tag"><%= request.category %></span><h3><%= request.title %></h3></div>
+                    <span class="status-chip <%= request.status === 'concluido' || request.status === 'concluída' ? 'status-open' : 'status-ongoing' %>"><%= request.status %></span>
+                  </div>
+                  <div class="details-row">
+                    <span><strong>Solicitante:</strong> <%= request.user ? request.user.name : 'Indisponível' %></span>
+                    <% if (request.ehParaTerceiro) { %><span class="badge-pill">Ajuda intermediada por ONG</span><% } %>
+                  </div>
+                  <div class="details-row">
+                    <span><strong>Estrelas:</strong> <%= request.rating ? `${'★'.repeat(request.rating)} (${request.rating}/5)` : 'Aguardando avaliação' %></span>
+                  </div>
+                  <p><strong>Comentário:</strong> <%= request.rating ? (request.ratingComment || 'Sem comentário.') : 'A pessoa ajudada ainda não deixou um comentário.' %></p>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+    <%- include('partials/rodape') %>
+  </body>
+</html>

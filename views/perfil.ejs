@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Perfil</span>
+            <h1>Meu perfil</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-secondary" href="/dashboard">Voltar</a>
+          </div>
+        </section>
+
+        <section class="panel-section profile-panel">
+          <% if (error) { %><p class="error"><%= error %></p><% } %>
+          <% if (success) { %><p class="success"><%= success %></p><% } %>
+          <article class="profile-card profile-layout-card">
+            <div class="profile-hero">
+              <div class="profile-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+              <div>
+                <span class="page-eyebrow">Conta</span>
+                <h2><%= user.name %></h2>
+              </div>
+            </div>
+
+            <div class="profile-grid">
+              <form class="auth-form profile-edit-form" action="/perfil" method="POST">
+                <label class="form-label" for="profileName">Nome</label>
+                <input id="profileName" type="text" name="name" value="<%= user.name %>" required />
+                <label class="form-label" for="profileEmail">E-mail</label>
+                <input id="profileEmail" type="email" name="email" value="<%= user.email %>" required />
+                <label class="form-label" for="profileCity">Bairro / localidade</label>
+                <input id="profileCity" type="text" name="city" value="<%= user.city %>" required />
+                <label class="form-label" for="profilePhone">Telefone</label>
+                <input id="profilePhone" type="text" name="phone" value="<%= user.phone %>" required />
+                <label class="form-label" for="profilePassword">Nova senha (opcional)</label>
+                <input id="profilePassword" type="password" name="password" placeholder="Deixe em branco para manter" />
+                <label class="form-label" for="profileConfirmPassword">Confirmar nova senha</label>
+                <input id="profileConfirmPassword" type="password" name="confirmPassword" />
+                <button type="submit" class="btn">Salvar alterações</button>
+              </form>
+              <p><strong>Tipo:</strong> <%= user.userType %></p>
+              <p><strong>Perfil:</strong> <%= user.role === 'admin' ? 'Administrador' : 'Usuário' %></p>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel-section">
+          <article class="card danger-zone">
+            <h2>Excluir conta</h2>
+            <p>Essa ação remove sua conta, pedidos e dados relacionados permanentemente.</p>
+            <form action="/perfil/excluir" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita.');">
+              <button type="submit" class="btn btn-danger">Excluir minha conta</button>
+            </form>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

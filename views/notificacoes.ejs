@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notificações - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Central de mensagens</span>
+            <h1>Notificações</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-secondary" href="/dashboard">Voltar</a>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-kicker">Central</span>
+              <h2>Mensagens recentes</h2>
+            </div>
+          </div>
+
+          <div class="notification-list">
+            <% notifications.forEach(function(notification) { %>
+              <article class="notification-card <%= notification.read ? '' : 'unread' %>">
+                <div>
+                  <strong><%= notification.title %></strong>
+                  <span><%= notification.message %></span>
+                </div>
+                <% if (!notification.read) { %>
+                  <form action="/notifications/<%= notification.id %>/read" method="POST">
+                    <button type="submit" class="btn btn-sm">Marcar como lida</button>
+                  </form>
+                <% } else { %>
+                  <span class="badge-pill">Lida</span>
+                <% } %>
+              </article>
+            <% }) %>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<header class="topnav">
+  <div class="container nav-inner">
+    <a href="/" class="brand">
+      <img src="/img/logo.jpg" alt="ConectaVida — Ajuda que conecta pessoas" class="app-logo" />
+      <span>ConectaVida</span>
+    </a>
+    <nav>
+      <% if (user) { %>
+        <a href="/dashboard" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">Início</a>
+        <% if (user.userType !== 'voluntario') { %>
+          <a href="/pedir-ajuda" class="<%= currentPage === 'novo-pedido' ? 'active' : '' %>">Pedir Ajuda</a>
+          <a href="/meus-pedidos" class="<%= currentPage === 'meus-pedidos' ? 'active' : '' %>">Meus pedidos</a>
+        <% } %>
+        <a href="/ajudar" class="<%= currentPage === 'ajudar' ? 'active' : '' %>">Ajudar</a>
+        <a href="/feed" class="<%= currentPage === 'feed' ? 'active' : '' %>">Mural</a>
+        <a href="/notifications" class="<%= currentPage === 'notifications' ? 'active' : '' %>">Notificações</a>
+        <a href="/chat" class="<%= currentPage === 'chat' ? 'active' : '' %>">Conversas</a>
+        <a href="/perfil" class="<%= currentPage === 'perfil' ? 'active' : '' %>">Perfil</a>
+        <a href="/logout">Sair</a>
+      <% } else { %>
+        <a href="/" class="<%= currentPage === 'home' ? 'active' : '' %>">Início</a>
+        <a href="/login" class="<%= currentPage === 'login' ? 'active' : '' %>">Entrar</a>
+        <a href="/cadastro" class="<%= currentPage === 'cadastro' ? 'active' : '' %>">Cadastro</a>
+        <a href="/feed" class="<%= currentPage === 'feed' ? 'active' : '' %>">Mural</a>
+      <% } %>
+    </nav>
+  </div>
+</header>

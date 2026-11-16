@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mural da comunidade - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Comunidade</span>
+            <h1>Pedidos disponíveis</h1>
+          </div>
+          <% if (user && user.userType === 'solicitante') { %>
+            <div class="header-actions">
+              <a class="btn" href="/pedir-ajuda">Novo pedido</a>
+            </div>
+          <% } %>
+        </section>
+
+        <section class="filter-card">
+          <form class="search-form" method="GET" action="/feed">
+            <label class="input-label" for="searchFeed">Buscar pedidos</label>
+            <div class="search-row">
+              <input id="searchFeed" type="text" name="q" value="<%= searchQuery %>" placeholder="Cidade, categoria ou palavra-chave" />
+              <button type="submit" class="btn btn-sm">Buscar</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel-section">
+          <% if (!requests.length) { %>
+            <div class="empty-panel">
+              <h3>Nenhum pedido encontrado</h3>
+              <p>Tente outra palavra-chave ou aguarde novas publicações.</p>
+            </div>
+          <% } else { %>
+            <div class="request-list">
+              <% requests.forEach(function(request) { %>
+                <article class="request-card featured-card">
+                  <div class="request-head">
+                    <div>
+                      <% if (request.ehParaTerceiro && request.user && request.user.tipo === 'ONG') { %>
+                        <span class="category-tag">Pedido via ONG: <%= request.user.nomeInstituicao || request.user.name %></span>
+                      <% } %>
+                      <span class="category-tag"><%= request.category %></span>
+                      <h3><%= request.ehParaTerceiro && request.nomeBeneficiarioFinal ? request.nomeBeneficiarioFinal + (request.idadeBeneficiarioFinal ? ', ' + request.idadeBeneficiarioFinal + ' anos' : '') : request.title %></h3>
+                    </div>
+                    <span class="status-chip status-open"><%= request.status %></span>
+                  </div>
+
+                  <div class="details-row">
+                    <span><strong>Bairro:</strong> <%= request.city %></span>
+                    <span><strong>Categoria:</strong> <%= request.category %></span>
+                    <span><strong>Urgência:</strong> Alta</span>
+                  </div>
+
+                  <p class="request-description"><%= request.description %></p>
+                  <% if (request.ehParaTerceiro && !request.temAcessoInternet) { %><p class="privacy-note">Sem acesso à internet. O contato será feito pela ONG.</p><% } %>
+
+                  <div class="request-actions">
+                    <a href="/pedido/<%= request._id %>" class="btn btn-secondary btn-sm">Ver pedido</a>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

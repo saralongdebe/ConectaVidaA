@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Administração</span>
+            <h1>Painel administrativo</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-secondary" href="/dashboard">Voltar</a>
+          </div>
+        </section>
+
+        <section class="summary-strip">
+          <article class="summary-card primary-metric">
+            <span class="summary-label">Usuários cadastrados</span>
+            <strong><%= metrics.users %></strong>
+            <small>Total registrado</small>
+          </article>
+          <article class="summary-card success-metric">
+            <span class="summary-label">Ajudas concluídas</span>
+            <strong><%= metrics.completed %></strong>
+            <small>Total concluído</small>
+          </article>
+          <article class="summary-card accent-metric">
+            <span class="summary-label">Pedidos ativos hoje</span>
+            <strong><%= metrics.activeToday %></strong>
+            <small><%= metrics.activeToday ? 'Em andamento hoje' : 'Nenhum dado ainda' %></small>
+          </article>
+        </section>
+
+        <section class="panel-section">
+          <article class="card">
+            <div class="mini-topline"><span class="section-kicker">Análise</span></div>
+            <h2>Bloqueios recentes</h2>
+            <% if (!blocks.length) { %>
+              <div class="empty-panel"><p>Nenhum bloqueio pendente.</p></div>
+            <% } else { %>
+              <div class="notification-list">
+                <% blocks.forEach(function(block) { %>
+                  <article class="notification-card">
+                    <div><strong><%= block.requester.name %></strong><span>Ajudante: <%= block.helper.name %> | Motivo: <%= block.reason %></span></div>
+                    <div class="request-actions compact-actions">
+                      <span class="badge-pill"><%= block.status %></span>
+                      <form action="/admin/bloqueios/<%= block._id %>/analisar" method="POST">
+                        <button type="submit" class="btn btn-sm">Marcar como analisado</button>
+                      </form>
+                    </div>
+                  </article>
+                <% }) %>
+              </div>
+            <% } %>
+          </article>
+        </section>
+
+        <section class="panel-section">
+          <article class="card admin-summary">
+            <div class="mini-topline">
+              <span class="section-kicker">Resumo</span>
+            </div>
+            <h2>Últimas notificações</h2>
+            <div class="notification-list">
+              <% notifications.forEach(function(notification) { %>
+                <article class="notification-card <%= notification.read ? '' : 'unread' %>">
+                  <div>
+                    <strong><%= notification.title %></strong>
+                    <span><%= notification.message %></span>
+                  </div>
+                  <span class="badge-pill">Status</span>
+                </article>
+              <% }) %>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

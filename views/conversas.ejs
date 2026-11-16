@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conversas - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Comunicação</span>
+            <h1>Conversa rápida</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-secondary" href="/dashboard">Voltar</a>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <article class="chat-card">
+            <% if (!chatThreads || !chatThreads.length) { %>
+              <div class="empty-panel">
+                <h3>Você ainda não tem conversas</h3>
+                <p>Quando um pedido for aceito por um ajudante, a conversa aparecerá aqui.</p>
+              </div>
+            <% } else { %>
+              <div class="chat-list">
+                <% chatThreads.forEach(function(thread) { %>
+                  <div class="chat-thread">
+                    <div class="chat-thread-head">
+                      <strong><%= user.userType === 'voluntario' ? thread.requesterName : thread.helperName %></strong>
+                      <span class="badge-pill">Pedido #<%= String(thread.requestId).slice(-6) %></span>
+                    </div>
+                    <p><%= thread.messages && thread.messages.length ? thread.messages[0].content : 'Nenhuma mensagem ainda.' %></p>
+                    <div class="chat-inline-messages">
+                      <% if (thread.messages && thread.messages.length) { %>
+                        <% thread.messages.forEach(function(message) { %>
+                          <div class="chat-message-row">
+                            <span class="chat-author"><%= message.senderName %></span>
+                            <span class="chat-text"><%= message.content %></span>
+                          </div>
+                        <% }) %>
+                      <% } %>
+                    </div>
+                    <form class="chat-form" action="/chat" method="POST">
+                      <input type="hidden" name="requestId" value="<%= thread.requestId %>" />
+                      <textarea name="message" placeholder="Escreva sua mensagem" required></textarea>
+                      <button type="submit" class="btn btn-sm">Enviar mensagem</button>
+                    </form>
+                    <% if (user.userType === 'voluntario') { %>
+                      <form class="request-actions compact-actions" action="/pedido/<%= thread.requestId %>/bloquear" method="POST">
+                        <label class="input-label" for="blockReason-<%= thread.requestId %>">Bloquear usuário</label>
+                        <select id="blockReason-<%= thread.requestId %>" name="reason" required>
+                          <option value="">Selecione um motivo</option>
+                          <option>Violação de regras</option>
+                          <option>Falta de educação</option>
+                          <option>Pedido falso</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary btn-sm">Bloquear usuário</button>
+                      </form>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

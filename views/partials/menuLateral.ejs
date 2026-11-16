@@ -1,0 +1,66 @@
+<svg class="dashboard-icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"/><path d="M9 21v-7h6v7"/></symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="icon-hand-heart" viewBox="0 0 24 24"><path d="M11 12 8.5 9.5a2.1 2.1 0 0 0-3 3L10 17h5l4-4a2.1 2.1 0 0 0-3-3L14 12"/><path d="M2 13h3l4 4"/><path d="M16 3.5a2.5 2.5 0 0 1 4.3 1.8c0 2-3.3 4.2-3.3 4.2s-3.3-2.2-3.3-4.2A2.5 2.5 0 0 1 16 3.5Z"/></symbol>
+  <symbol id="icon-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6a1.5 1.5 0 0 0-1.5-1.5h-3A1.5 1.5 0 0 0 9 4.5Z"/><path d="M9 12h6M9 16h6"/></symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></symbol>
+  <symbol id="icon-message" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></symbol>
+  <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="icon-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></symbol>
+  <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"/><path d="m19 14 1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14Z"/></symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+</svg>
+
+<aside class="sidebar-panel dashboard-sidebar">
+  <div class="sidebar-header">
+    <div class="brand-icon">
+      <img src="/img/logo.jpg" alt="ConectaVida — Ajuda que conecta pessoas" class="app-logo" />
+    </div>
+    <div class="sidebar-brand">
+      <p class="brand-kicker">ConectaVida</p>
+      <p class="sidebar-tagline">Juntos, fazemos a diferença</p>
+    </div>
+  </div>
+
+  <div class="dashboard-profile">
+    <% if (user.photo) { %>
+      <img class="dashboard-avatar" src="<%= user.photo %>" alt="Foto de perfil de <%= user.name %>" />
+    <% } else { %>
+      <span class="dashboard-avatar dashboard-avatar-initials" aria-hidden="true"><%= (user.name || 'CV').split(' ').slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() %></span>
+    <% } %>
+    <div class="dashboard-profile-copy">
+      <strong><%= user.name %></strong>
+      <span><%= user.userType === 'voluntario' ? 'Voluntário(a)' : (user.tipo === 'ONG' ? 'Organização parceira' : 'Pessoa solicitante') %></span>
+      <% if (user.city) { %><small><%= user.city %></small><% } %>
+    </div>
+  </div>
+
+  <p class="sidebar-section-label">Seu espaço</p>
+  <nav class="side-nav">
+    <a href="/dashboard" class="nav-link<%= currentPage === 'dashboard' ? ' active' : '' %>"<% if (currentPage === 'dashboard') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-home"></use></svg></span><span>Início</span></a>
+    <% if (user.role === 'admin') { %>
+      <a href="/admin" class="nav-link<%= currentPage === 'admin' ? ' active' : '' %>"<% if (currentPage === 'admin') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-shield"></use></svg></span><span>Administração</span></a>
+    <% } %>
+    <% if (user.userType !== 'voluntario') { %>
+      <a href="/pedir-ajuda" class="nav-link<%= currentPage === 'novo-pedido' ? ' active' : '' %>"<% if (currentPage === 'novo-pedido') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-hand-heart"></use></svg></span><span>Pedir ajuda</span></a>
+      <a href="/meus-pedidos" class="nav-link<%= currentPage === 'meus-pedidos' ? ' active' : '' %>"<% if (currentPage === 'meus-pedidos') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-clipboard"></use></svg></span><span>Meus pedidos</span></a>
+    <% } %>
+    <% if (user.userType === 'voluntario') { %>
+      <a href="/ajudar" class="nav-link<%= currentPage === 'ajudar' ? ' active' : '' %>"<% if (currentPage === 'ajudar') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-heart"></use></svg></span><span>Ajudar</span></a>
+      <a href="/relatorio" class="nav-link<%= currentPage === 'relatorio' ? ' active' : '' %>"<% if (currentPage === 'relatorio') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-clipboard"></use></svg></span><span>Meu relatório</span></a>
+    <% } %>
+    <a href="/feed" class="nav-link<%= currentPage === 'feed' ? ' active' : '' %>"<% if (currentPage === 'feed') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-users"></use></svg></span><span>Comunidade</span></a>
+    <a href="/notifications" class="nav-link<%= currentPage === 'notifications' ? ' active' : '' %>"<% if (currentPage === 'notifications') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-bell"></use></svg></span><span>Notificações</span></a>
+    <a href="/chat" class="nav-link<%= currentPage === 'chat' ? ' active' : '' %>"<% if (currentPage === 'chat') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-message"></use></svg></span><span>Conversas</span></a>
+    <a href="/perfil" class="nav-link<%= currentPage === 'perfil' ? ' active' : '' %>"<% if (currentPage === 'perfil') { %> aria-current="page"<% } %>><span class="nav-icon"><svg><use href="#icon-user"></use></svg></span><span>Meu perfil</span></a>
+    <a href="/logout" class="nav-link logout-link"><span class="nav-icon"><svg><use href="#icon-log-out"></use></svg></span><span>Sair</span></a>
+  </nav>
+
+  <div class="sidebar-community-note">
+    <span class="community-note-icon"><svg><use href="#icon-heart"></use></svg></span>
+    <p>Pequenos gestos criam grandes redes de apoio.</p>
+  </div>
+</aside>

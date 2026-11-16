@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajudar - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Painel de voluntariado</span>
+            <h1>Pedidos disponíveis</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-secondary" href="/feed">Ver feed</a>
+          </div>
+        </section>
+
+        <section class="summary-strip">
+          <article class="summary-card">
+            <span class="summary-label">Pedidos abertos</span>
+            <strong><%= requests.length %></strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Tarefas assumidas</span>
+            <strong><%= acceptedRequests && acceptedRequests.length ? acceptedRequests.length : 0 %></strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Status do seu perfil</span>
+            <strong>Voluntário</strong>
+          </article>
+        </section>
+
+        <section class="filter-card">
+          <form class="search-form" method="GET" action="/ajudar">
+            <label class="input-label" for="searchHelp">Buscar pedidos</label>
+            <div class="search-row">
+              <input id="searchHelp" type="text" name="q" value="<%= searchQuery %>" placeholder="Cidade, categoria ou palavra-chave" />
+              <button type="submit" class="btn btn-sm">Buscar</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">Solicitações ativas</span>
+              <h2>Pedidos disponíveis</h2>
+            </div>
+          </div>
+
+          <% if (!requests.length) { %>
+            <div class="empty-panel">
+              <h3>Nenhum pedido aberto encontrado</h3>
+              <p>Os pedidos aparecerão aqui quando forem publicados.</p>
+            </div>
+          <% } else { %>
+            <div class="request-list">
+              <% requests.forEach(function(request) { %>
+                <article class="request-card help-request-card">
+                  <div class="request-head">
+                    <div>
+                      <% if (request.ehParaTerceiro && request.user && request.user.tipo === 'ONG') { %>
+                        <span class="category-tag">Pedido via ONG: <%= request.user.nomeInstituicao || request.user.name %></span>
+                      <% } %>
+                      <span class="category-tag"><%= request.category %></span>
+                      <h3><%= request.ehParaTerceiro && request.nomeBeneficiarioFinal ? request.nomeBeneficiarioFinal + (request.idadeBeneficiarioFinal ? ', ' + request.idadeBeneficiarioFinal + ' anos' : '') : request.title %></h3>
+                    </div>
+                    <span class="status-chip status-open"><%= request.status %></span>
+                  </div>
+
+                  <div class="details-row">
+                    <span><strong>Bairro:</strong> <%= request.city %></span>
+                    <span><strong>Publicado por:</strong> <%= request.ehParaTerceiro && request.user && request.user.tipo === 'ONG' ? (request.user.nomeInstituicao || request.user.name) : 'Pessoa que precisa de ajuda' %></span>
+                    <% if (request.ehParaTerceiro && !request.temAcessoInternet) { %><span><strong>Contato:</strong> via ONG, sem acesso à internet</span><% } %>
+                  </div>
+
+                  <p class="request-description"><%= request.description %></p>
+
+                  <div class="request-actions">
+                    <a href="/pedido/<%= request._id %>" class="btn btn-secondary btn-sm">Detalhes</a>
+                    <form action="/pedido/<%= request._id %>/quero-ajudar" method="POST">
+                      <button type="submit" class="btn btn-sm">Quero ajudar</button>
+                    </form>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+
+        <section class="panel-section accepted-section">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-kicker">Acompanhamento</span>
+              <h2>Pedidos que você assumiu</h2>
+            </div>
+          </div>
+
+          <% if (!acceptedRequests || !acceptedRequests.length) { %>
+            <div class="empty-panel soft-empty">
+              <p>Você ainda não assumiu nenhuma tarefa.</p>
+            </div>
+          <% } else { %>
+            <div class="request-list accepted-list">
+              <% acceptedRequests.forEach(function(request) { %>
+                <article class="request-card accepted-card">
+                  <div class="request-head">
+                    <div>
+                      <span class="category-tag"><%= request.category %></span>
+                      <h3><%= request.title %></h3>
+                    </div>
+                    <span class="status-chip status-ongoing"><%= request.status %></span>
+                  </div>
+
+                  <div class="details-row">
+                    <span><strong>Bairro:</strong> <%= request.city %></span>
+                    <span><strong>Solicitante:</strong> <%= request.user && request.user.name ? request.user.name : 'Pessoa que precisa de ajuda' %></span>
+                  </div>
+
+                  <% if (request.status !== 'concluido') { %>
+                    <div class="request-actions compact-actions">
+                      <form action="/pedido/<%= request._id %>/concluir" method="POST">
+                        <button type="submit" class="btn btn-sm">Marcar como concluído</button>
+                      </form>
+                    </div>
+                  <% } else { %>
+                    <div class="request-actions compact-actions">
+                      <span class="badge-pill">Pedido concluído</span>
+                    </div>
+                  <% } %>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>

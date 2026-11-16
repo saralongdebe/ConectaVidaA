@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo-wrap">
+            <img src="/img/logo.jpg" alt="ConectaVida — Ajuda que conecta pessoas" class="auth-logo" />
+          </div>
+          <span class="auth-badge">Cadastro</span>
+          <h1>Crie sua conta</h1>
+          <p>Junte-se à rede de apoio da comunidade com um perfil completo e seguro.</p>
+        </div>
+
+        <% if (error) { %><p class="error"><%= error %></p><% } %>
+
+        <form action="/cadastro" method="POST" novalidate class="auth-form">
+          <input type="text" name="name" placeholder="Nome" required />
+          <input type="email" name="email" placeholder="E-mail" />
+          <input type="password" name="password" placeholder="Senha" />
+          <input type="password" name="confirmPassword" placeholder="Confirmar senha" />
+          <input type="text" name="city" placeholder="Bairro / localidade" required />
+          <input type="text" name="phone" placeholder="Telefone" required />
+
+          <div class="form-block">
+            <label class="form-label">Tipo de conta</label>
+            <div class="account-type-grid">
+              <label class="account-type-card">
+                <input type="radio" name="userType" value="solicitante" checked />
+                <span>
+                  <strong>Sou pessoa que precisa de ajuda</strong>
+                  <small>Quero publicar um pedido para mim.</small>
+                </span>
+              </label>
+              <label class="account-type-card">
+                <input type="radio" name="userType" value="voluntario" />
+                <span>
+                  <strong>Sou pessoa que ajuda</strong>
+                  <small>Quero apoiar outras pessoas da comunidade.</small>
+                </span>
+              </label>
+              <label class="account-type-card">
+                <input type="radio" name="userType" value="ONG" />
+                <span>
+                  <strong>Sou ONG / Instituição</strong>
+                  <small>Vou intermediar pedidos para alguém sem acesso à plataforma.</small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <section class="ong-fields" id="ongFields" hidden>
+            <h2>Dados da ONG / Instituição</h2>
+            <input type="text" name="nomeInstituicao" placeholder="Nome da ONG / Instituição" data-ong-required />
+            <input type="text" name="cnpj" placeholder="CNPJ (opcional)" />
+            <input type="text" name="nomeResponsavel" placeholder="Nome do responsável" data-ong-required />
+            <input type="text" name="telefoneInstituicao" placeholder="Telefone / WhatsApp da ONG" data-ong-required />
+            <input type="text" name="bairroAtuacao" placeholder="Bairro de atuação" data-ong-required />
+          </section>
+
+          <button type="submit" class="btn">Cadastrar</button>
+        </form>
+
+        <p class="auth-link"><a href="/login">Já tem conta? Entrar</a></p>
+      </div>
+    </main>
+    <script>
+      const accountOptions = document.querySelectorAll('input[name="userType"]');
+      const ongFields = document.getElementById('ongFields');
+      const ongRequiredFields = ongFields.querySelectorAll('[data-ong-required]');
+      function updateOngFields() {
+        const selected = document.querySelector('input[name="userType"]:checked');
+        const isOng = selected && selected.value === 'ONG';
+        ongFields.hidden = !isOng;
+        ongRequiredFields.forEach((field) => { field.required = isOng; });
+      }
+      accountOptions.forEach((option) => option.addEventListener('change', updateOngFields));
+      updateOngFields();
+    </script>
+    <script defer src="/js/acessibilidade.js"></script>
+  </body>
+</html>

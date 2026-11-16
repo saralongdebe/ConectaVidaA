@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Pedidos - ConectaVida</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+  </head>
+  <body>
+    <div class="app-shell dashboard-shell">
+      <%- include('partials/menuLateral') %>
+
+      <main class="content-panel dashboard-content requester-content">
+        <section class="page-header">
+          <div>
+            <span class="page-eyebrow">Painel do solicitante</span>
+            <h1>Meus pedidos</h1>
+          </div>
+          <div class="header-actions">
+            <a class="btn" href="/pedir-ajuda">Novo pedido</a>
+          </div>
+        </section>
+
+        <section class="summary-strip">
+          <article class="summary-card">
+            <span class="summary-label">Pedidos publicados</span>
+            <strong><%= requests.length %></strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Aguardando apoio</span>
+            <strong><%= requests.filter((r) => r.status !== 'concluido').length %></strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Perfil</span>
+            <strong>Quem pede ajuda</strong>
+          </article>
+        </section>
+
+        <section class="panel-section">
+          <% if (edited) { %>
+            <div class="success edit-success" role="status">Seu pedido foi editado com sucesso.</div>
+          <% } %>
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">Solicitações</span>
+              <h2>Relação de pedidos</h2>
+            </div>
+          </div>
+
+          <% if (!requests.length) { %>
+            <div class="empty-panel">
+              <h3>Você ainda não publicou pedidos.</h3>
+              <p>Crie o primeiro pedido para receber apoio.</p>
+            </div>
+          <% } else { %>
+            <div class="request-list">
+              <% requests.forEach(function(request) { %>
+                <article class="request-card requester-request-card">
+                  <div class="request-head">
+                    <div>
+                      <span class="category-tag"><%= request.category %></span>
+                      <h3><%= request.title %></h3>
+                    </div>
+                    <span class="status-chip status-open"><%= request.status %></span>
+                  </div>
+
+                  <div class="details-row">
+                    <span><strong>Bairro:</strong> <%= request.city %></span>
+                    <span><strong>Data:</strong> <%= request.requestDate || request.createdAt.toISOString().slice(0,10) %></span>
+                  </div>
+
+                  <p class="request-description"><%= request.description %></p>
+
+                  <% if (request.photo) { %>
+                    <img class="request-photo request-list-photo" src="<%= request.photo %>" alt="Foto anexada ao pedido" />
+                  <% } %>
+
+                  <div class="details-row">
+                    <span><strong>Ajudante:</strong> <%= request.helper ? request.helper.name : 'Aguardando' %></span>
+                  </div>
+
+                  <div class="request-actions compact-actions">
+                    <a class="btn btn-secondary btn-sm" href="/pedido/<%= request._id %>">Visualizar</a>
+                    <a class="btn btn-secondary btn-sm" href="/pedido/<%= request._id %>/editar">Editar</a>
+                    <form action="/pedido/<%= request._id %>/excluir" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este pedido? Essa ação não pode ser desfeita.');">
+                      <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+
+    <%- include('partials/rodape') %>
+  </body>
+</html>
